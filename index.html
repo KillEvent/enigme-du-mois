@@ -442,6 +442,83 @@
   </div>
 </section>
 
+    <!-- ... Le reste de votre page ... -->
+
+<!-- SECTION DU BOUTON ET DE LA MODALE -->
+<section style="text-align: center; margin-top: 2em;">
+  <button id="solution-btn" style="
+    background-color: #DA4F40; 
+    color: #fff; 
+    padding: 0.8em 1.2em; 
+    font-size: 1em; 
+    border: none; 
+    border-radius: 5px;
+    cursor: pointer;
+  ">
+    Voir la solution
+  </button>
+</section>
+
+<!-- Fenêtre modale cachée par défaut -->
+<div id="solution-modal" style="
+  display: none; 
+  position: fixed; 
+  top: 0; left: 0; 
+  width: 100%; 
+  height: 100%; 
+  background-color: rgba(0,0,0,0.9);
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+">
+  <div style="
+    background-color: #111; 
+    border: 2px solid #DA4F40;
+    padding: 2em;
+    max-width: 600px;
+    margin: auto;
+  ">
+    <h2 style="color: #DA4F40;">La solution</h2>
+    <p style="color: #ccc;">
+      Et oui... <br/>
+      Dracula a tué Machin <br/>
+      avec un cierge <br/>
+      dans la salle de bain !
+    </p>
+    <button onclick="closeSolution()" style="
+      margin-top: 1em;
+      background-color: #DA4F40;
+      color: #fff;
+      border: none; 
+      padding: 0.5em 1em;
+      cursor: pointer;
+      border-radius: 4px;
+    ">
+      Fermer
+    </button>
+  </div>
+</div>
+
+<script>
+  // Au chargement de la page, on associe l'ouverture de la modale au clic sur le bouton
+  document.addEventListener('DOMContentLoaded', function() {
+    const btn = document.getElementById('solution-btn');
+    const modal = document.getElementById('solution-modal');
+
+    btn.addEventListener('click', function() {
+      modal.style.display = 'flex';  // on l'affiche en flex (pour align-items/justify-content)
+    });
+  });
+
+  // Fonction pour fermer la modale
+  function closeSolution() {
+    const modal = document.getElementById('solution-modal');
+    modal.style.display = 'none';
+  }
+</script>
+
+
   </main>
 
   <footer>
