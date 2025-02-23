@@ -55,6 +55,32 @@
     }
 
     /* ------------------------------
+       BOUTON "Comment jouer"
+    --------------------------------*/
+    #howtoplay-btn {
+      background-color: #DA4F40;
+      color: #fff;
+      padding: 0.7em 1em;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1em;
+      font-weight: bold;
+      margin: 0.5em auto; /* centre le bouton horizontalement */
+      display: block;     /* pour le centrage */
+    }
+    /* Panneau explicatif masqué par défaut */
+    #howtoplay-panel {
+      display: none;
+      background-color: #111;
+      border: 1px solid #DA4F40;
+      color: #ccc;
+      margin: 0 1em 1em;
+      padding: 1em;
+      max-width: 600px;
+    }
+
+    /* ------------------------------
        CONTENEUR DES TABLEAUX
     --------------------------------*/
     .logigramme-container {
@@ -73,7 +99,7 @@
      */
     table.logigramme {
       table-layout: fixed;
-      width: 320px;           /* Largeur forcée (ajustez à vos besoins) */
+      width: 320px; /* Largeur forcée (modifiez si besoin) */
       border-collapse: collapse;
       background-color: #111;
       box-shadow: 0 0 10px rgba(218,79,64,0.5);
@@ -131,16 +157,16 @@
       background-color: #111;
       border: 1px solid #DA4F40;
     }
+
     .texte-justifie {
-  text-align: justify;
-}
+      text-align: justify;
+    }
+
     .petit {
-  font-size: 0.85em; /* Ajustez pour la taille souhaitée */
-  font-style: italic;
-  color: #ccc;       /* Optionnel : changer la couleur */
-}
-
-
+      font-size: 0.85em;
+      font-style: italic;
+      color: #ccc;
+    }
 
     /* ------------------------------
        ILLUSTRATIONS
@@ -170,25 +196,48 @@
     }
 
     /* ------------------------------
+       FENÊTRE MODALE (SOLUTION)
+    --------------------------------*/
+    #solution-modal {
+      display: none; 
+      position: fixed; 
+      top: 0; 
+      left: 0; 
+      width: 100%; 
+      height: 100%; 
+      background-color: rgba(0,0,0,0.9);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    #solution-content {
+      background-color: #111; 
+      border: 2px solid #DA4F40;
+      padding: 2em;
+      max-width: 600px;
+      margin: auto;
+    }
+
+    /* ------------------------------
        MEDIA QUERIES (FORMAT MOBILE)
     --------------------------------*/
     @media (max-width: 700px) {
       .logigramme-container {
-        flex-direction: column;   /* Empile les tableaux */
+        flex-direction: column; /* Empile les tableaux */
         align-items: center;
       }
-
       table.logigramme {
-        width: 90%;              /* Sur mobile, prend 90% de la largeur */
+        width: 90%;  /* Sur mobile, prend 90% de la largeur */
         max-width: 320px;
       }
     }
   </style>
 
   <script>
-    /**
-     * Mettre à jour les cercles verts
-     */
+    /* ------------------------------------------
+       Gestion des logigrammes (croix & cercles)
+       ------------------------------------------ */
     function updateCircles(table) {
       const rows = table.rows;
       const numRows = rows.length;
@@ -234,9 +283,6 @@
       }
     }
 
-    /**
-     * Toggle cross/circle sur clic
-     */
     function toggleCross(e) {
       const cell = e.target;
       if (cell.tagName.toLowerCase() === 'th') return; // ignore <th>
@@ -250,11 +296,43 @@
       updateCircles(table);
     }
 
-    window.addEventListener('DOMContentLoaded', () => {
+    /* ------------------------------------------
+       BOUTON "Comment jouer" (toggles a panel)
+       ------------------------------------------ */
+    function toggleHowToPlay() {
+      const panel = document.getElementById('howtoplay-panel');
+      if (panel.style.display === 'none' || panel.style.display === '') {
+        panel.style.display = 'block';
+      } else {
+        panel.style.display = 'none';
+      }
+    }
+
+    /* ------------------------------------------
+       FENÊTRE MODALE "Solution"
+       ------------------------------------------ */
+    function openSolution() {
+      const modal = document.getElementById('solution-modal');
+      modal.style.display = 'flex';
+    }
+    function closeSolution() {
+      const modal = document.getElementById('solution-modal');
+      modal.style.display = 'none';
+    }
+
+    /* ------------------------------------------
+       Initialisation au chargement
+       ------------------------------------------ */
+    document.addEventListener('DOMContentLoaded', () => {
+      // Active la logique de croix/cercle sur tous les tableaux
       const tables = document.querySelectorAll('table.logigramme');
       tables.forEach((table) => {
         table.addEventListener('click', toggleCross);
       });
+
+      // Bouton "Voir la solution"
+      const solutionBtn = document.getElementById('solution-btn');
+      solutionBtn.addEventListener('click', openSolution);
     });
   </script>
 </head>
@@ -270,58 +348,76 @@
     </h2>
   </header>
 
+  <!-- BOUTON "Comment jouer" + panneau explicatif -->
+  <button id="howtoplay-btn" onclick="toggleHowToPlay()">
+    Comment jouer
+  </button>
+
+  <div id="howtoplay-panel">
+    <h3>Règles du jeu</h3>
+    <p>
+      <ul>
+        <li>Cliquez sur les cases du tableau pour mettre une croix (❌).</li>
+        <li>Quand une ligne ou une colonne est entièrement barrée sauf une case, la dernière se marque d’un cercle (✅).</li>
+        <li>Utilisez vos déductions pour déterminer qui est le coupable, avec quelle arme et dans quel lieu !</li>
+      </ul>
+      Bonne enquête !
+    </p>
+    <button style="
+      background-color: #DA4F40;
+      color: #fff;
+      border: none; 
+      padding: 0.5em 1em;
+      cursor: pointer;
+      border-radius: 4px;"
+      onclick="toggleHowToPlay()"
+    >
+      Fermer
+    </button>
+  </div>
+
   <main>
+    <!-- SECTION INDICES -->
     <section class="indices">
       <h3>L'histoire</h3>
-<p class="texte-justifie">
-  Vous avez été convié au sinistre manoir de Dracula. Malheureusement, vos espoirs d’une soirée tranquille s’évanouissent rapidement… Car un meurtre vient de s’y produire ! 
-  Les ombres s’étirent, les murs murmurent, et le regard du maître des lieux semble peser sur chaque recoin.
-  Dans cette demeure, où la vie et la mort se confondent, saurez-vous découvrir le sombre secret qui s’y cache… avant qu’il ne soit trop tard ?
-</p>
+      <p class="texte-justifie">
+        Vous avez été convié au sinistre manoir de Dracula. Malheureusement, vos espoirs d’une soirée tranquille 
+        s’évanouissent rapidement… Car un meurtre vient de s’y produire !  
+        Les ombres s’étirent, les murs murmurent, et le regard du maître des lieux semble peser sur chaque recoin.  
+        Dans cette demeure, où la vie et la mort se confondent, saurez-vous découvrir le sombre secret qui s’y cache…  
+        avant qu’il ne soit trop tard ?
+      </p>
 
       <h3>Les indices de l'enquête</h3>
-      <!-- Vos paragraphes ... -->
       <p>Dracula a mentionné qu’il réservait un sort spécial au suspect portant... une fourchette! 🍴</p>
       <p>En entrant, vous avez surpris Frankenstein tenant un coussin dans les mains... mais pourquoi? 😳</p>
       <p>Étrangement, le cierge habituel n’était pas dans la chambre... 🔦</p>
       <p>Zombie a été retrouvé caché sous un fauteuil en velours rouge. Un refuge, ou un piège? 🪑🧟‍♂️</p>
       <p>Le corps a été découvert dans une baignoire en marbre. Un lieu... sinistre. 🛁🩸</p>
-      <p><strong>Dernier indice :</strong> « Ma boule de cristal dit que Zombie tenait une fourchette. »</p>
+      <p><strong>Dernier indice :</strong> « Ma boule de cristal dit que Zombie tenait une fourchette. »</p>
       <p class="petit">*Solution en bas de page.</p>
     </section>
 
-    <!-- Conteneur flex avec 3 tableaux -->
+    <!-- TABLEAUX LOGIGRAMME -->
     <section class="logigramme-container">
       <!-- Table 1 : Suspects vs. Armes -->
       <table class="logigramme" id="suspects-armes">
         <tr>
           <th></th>
-              <th>
-      <img src="fourchette1.png" alt="fourchette" style="width: 40px;" />
-    </th>
-          <th>
-      <img src="oreiller1.png" alt="oreiller" style="width: 40px;" />
-    </th>
-          <th>
-      <img src="cierge1.png" alt="cierge" style="width: 40px;" />
-    </th>
+          <th><img src="fourchette1.png" alt="fourchette" style="width: 40px;" /></th>
+          <th><img src="oreiller1.png" alt="oreiller" style="width: 40px;" /></th>
+          <th><img src="cierge1.png" alt="cierge" style="width: 40px;" /></th>
         </tr>
         <tr>
-          <th>
-      <img src="dracula1.png" alt="dracula" style="width: 40px;" />
-    </th>
+          <th><img src="dracula1.png" alt="dracula" style="width: 40px;" /></th>
           <td></td><td></td><td></td>
         </tr>
         <tr>
-          <th>
-      <img src="frankenstein1.png" alt="frankenstein" style="width: 40px;" />
-    </th>
+          <th><img src="frankenstein1.png" alt="frankenstein" style="width: 40px;" /></th>
           <td></td><td></td><td></td>
         </tr>
         <tr>
-          <th>
-      <img src="zombie1.png" alt="zombie" style="width: 40px;" />
-    </th>
+          <th><img src="zombie1.png" alt="zombie" style="width: 40px;" /></th>
           <td></td><td></td><td></td>
         </tr>
       </table>
@@ -330,32 +426,20 @@
       <table class="logigramme" id="suspects-lieux">
         <tr>
           <th></th>
-          <th>
-      <img src="sdb1.png" alt="salle de bain" style="width: 40px;" />
-    </th>
-          <th>
-      <img src="chambre1.png" alt="chambre" style="width: 40px;" />
-    </th>
-          <th>
-      <img src="sdc1.png" alt="salle de cinema" style="width: 40px;" />
-    </th>
+          <th><img src="sdb1.png" alt="salle de bain" style="width: 40px;" /></th>
+          <th><img src="chambre1.png" alt="chambre" style="width: 40px;" /></th>
+          <th><img src="sdc1.png" alt="salle de cinema" style="width: 40px;" /></th>
         </tr>
         <tr>
-            <th>
-      <img src="dracula1.png" alt="dracula" style="width: 40px;" />
-    </th>
+          <th><img src="dracula1.png" alt="dracula" style="width: 40px;" /></th>
           <td></td><td></td><td></td>
         </tr>
         <tr>
-             <th>
-      <img src="frankenstein1.png" alt="frankenstein" style="width: 40px;" />
-    </th>
+          <th><img src="frankenstein1.png" alt="frankenstein" style="width: 40px;" /></th>
           <td></td><td></td><td></td>
         </tr>
         <tr>
-          <th>
-      <img src="zombie1.png" alt="zombie" style="width: 40px;" />
-    </th>
+          <th><img src="zombie1.png" alt="zombie" style="width: 40px;" /></th>
           <td></td><td></td><td></td>
         </tr>
       </table>
@@ -364,204 +448,155 @@
       <table class="logigramme" id="armes-lieux">
         <tr>
           <th></th>
-           <th>
-      <img src="sdb1.png" alt="salle de bain" style="width: 40px;" />
-    </th>
-          <th>
-      <img src="chambre1.png" alt="chambre" style="width: 40px;" />
-    </th>
-            <th>
-      <img src="sdc1.png" alt="salle de cinema" style="width: 40px;" />
-    </th>
+          <th><img src="sdb1.png" alt="salle de bain" style="width: 40px;" /></th>
+          <th><img src="chambre1.png" alt="chambre" style="width: 40px;" /></th>
+          <th><img src="sdc1.png" alt="salle de cinema" style="width: 40px;" /></th>
         </tr>
         <tr>
-           <th>
-      <img src="fourchette1.png" alt="fourchette" style="width: 40px;" />
-    </th>
+          <th><img src="fourchette1.png" alt="fourchette" style="width: 40px;" /></th>
           <td></td><td></td><td></td>
         </tr>
         <tr>
-           <th>
-      <img src="oreiller1.png" alt="oreiller" style="width: 40px;" />
-    </th>
+          <th><img src="oreiller1.png" alt="oreiller" style="width: 40px;" /></th>
           <td></td><td></td><td></td>
         </tr>
         <tr>
-         <th>
-      <img src="cierge1.png" alt="cierge" style="width: 40px;" />
-    </th>
+          <th><img src="cierge1.png" alt="cierge" style="width: 40px;" /></th>
           <td></td><td></td><td></td>
         </tr>
       </table>
     </section>
 
-    <!-- Illustrations -->
-   <!-- Illustrations -->
-<section>
-  <!-- Titre pour les suspects -->
-  <h2 style="text-align: center;">Suspects</h2>
-  <div class="illustrations">
-    <div class="illustration-item">
-      <img src="dracula.png" alt="Dracula" />
-      <h3>Dracula</h3>
-      <p>Aristocrate sombre, immortel, avide de sang, crocs acérés.</p>
+    <!-- ILLUSTRATIONS -->
+    <section>
+      <h2 style="text-align: center;">Suspects</h2>
+      <div class="illustrations">
+        <div class="illustration-item">
+          <img src="dracula.png" alt="Dracula" />
+          <h3>Dracula</h3>
+          <p>Aristocrate sombre, immortel, avide de sang, crocs acérés.</p>
+        </div>
+        <div class="illustration-item">
+          <img src="frankenstein.png" alt="Frankenstein" />
+          <h3>Frankenstein</h3>
+          <p>Créature massive, corps cousu, solitaire, cherchant l'acceptation.</p>
+        </div>
+        <div class="illustration-item">
+          <img src="zombie.png" alt="Zombie" />
+          <h3>Zombie</h3>
+          <p>Créature lente, décomposée, animée par un désir insatiable de chair.</p>
+        </div>
+      </div>
+
+      <h2 style="text-align: center;">Armes</h2>
+      <div class="illustrations">
+        <div class="illustration-item">
+          <img src="fourchette.png" alt="Fourchette" />
+          <h3>Fourchette</h3>
+          <p>Bien pire qu’un couteau, si vous y pensez.</p>
+        </div>
+        <div class="illustration-item">
+          <img src="oreiller.png" alt="Oreiller" />
+          <h3>Oreiller</h3>
+          <p>Moins dangereux que la fourchette, mais utilisé à bon escient...</p>
+        </div>
+        <div class="illustration-item">
+          <img src="cierge.png" alt="Cierge" />
+          <h3>Cierge</h3>
+          <p>Assez lourd pour tuer, ou pour illuminer toute la pièce.</p>
+        </div>
+      </div>
+
+      <h2 style="text-align: center;">Lieux</h2>
+      <div class="illustrations">
+        <div class="illustration-item">
+          <img src="sdb.png" alt="Salle de bain" />
+          <h3>Salle de bain</h3>
+          <p>Une salle de bain gigantesque, en marbre.</p>
+        </div>
+        <div class="illustration-item">
+          <img src="chambre.png" alt="Chambre" />
+          <h3>Chambre</h3>
+          <p>Un lit king size, défait, dans la pénombre.</p>
+        </div>
+        <div class="illustration-item">
+          <img src="sdc.png" alt="Salle de cinéma" />
+          <h3>Salle de cinéma</h3>
+          <p>Des sièges en velours rouge et une machine à pop-corn.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- BOUTON "Voir la solution" -->
+    <section style="text-align: center; margin-top: 2em;">
+      <button 
+        id="solution-btn"
+        style="
+          background-color: #DA4F40; 
+          color: #fff; 
+          padding: 0.8em 1.2em; 
+          font-size: 1em; 
+          border: none; 
+          border-radius: 5px;
+          cursor: pointer;
+          font-weight: bold;
+        "
+      >
+        Voir la solution
+      </button>
+    </section>
+
+    <!-- FENÊTRE MODALE (Solution) -->
+    <div id="solution-modal">
+      <div id="solution-content">
+        <h2 style="color: #DA4F40;">La solution</h2>
+        <p style="color: #ccc;">
+          Et oui, cher détective...<br/>
+          Le noble vampire Dracula a commis son méfait dans la salle de bain,<br/>
+          armé d’un simple cierge.<br/><br/>
+          Pas de bain moussant, mais un véritable bain de sang !<br/>
+          Qui aurait cru qu’une bougie sacrée finirait en arme du crime ?<br/>
+          À croire que même un aristocrate immortel peut être à court d'idées…
+        </p>
+        <button 
+          style="
+            margin-top: 1em;
+            background-color: #DA4F40;
+            color: #fff;
+            border: none; 
+            padding: 0.5em 1em;
+            cursor: pointer;
+            border-radius: 4px;"
+          onclick="closeSolution()"
+        >
+          Fermer
+        </button>
+      </div>
     </div>
-    <div class="illustration-item">
-      <img src="frankenstein.png" alt="Frankenstein" />
-      <h3>Frankenstein</h3>
-      <p>Créature massive, corps cousu, solitaire, cherchant l'acceptation.</p>
-    </div>
-    <div class="illustration-item">
-      <img src="zombie.png" alt="Zombie" />
-      <h3>Zombie</h3>
-      <p>Créature lente, décomposée, animée par un désir insatiable de chair.</p>
-    </div>
-  </div>
 
-  <!-- Titre pour les armes -->
-  <h2 style="text-align: center;">Armes</h2>
-  <div class="illustrations">
-    <div class="illustration-item">
-      <img src="fourchette.png" alt="Fourchette" />
-      <h3>Fourchette</h3>
-      <p>Bien pire qu’un couteau, si vous y pensez.</p>
-    </div>
-    <div class="illustration-item">
-      <img src="oreiller.png" alt="Oreiller" />
-      <h3>Oreiller</h3>
-      <p>Moins dangereux que la fourchette, mais utilisé à bon escient...</p>
-    </div>
-    <div class="illustration-item">
-      <img src="cierge.png" alt="Cierge" />
-      <h3>Cierge</h3>
-      <p>Assez lourd pour tuer, ou pour illuminer toute la pièce.</p>
-    </div>
-  </div>
-
-  <!-- Titre pour les lieux -->
-  <h2 style="text-align: center;">Lieux</h2>
-  <div class="illustrations">
-    <div class="illustration-item">
-      <img src="sdb.png" alt="Salle de bain" />
-      <h3>Salle de bain</h3>
-      <p>Une salle de bain gigantesque, en marbre.</p>
-    </div>
-    <div class="illustration-item">
-      <img src="chambre.png" alt="Chambre" />
-      <h3>Chambre</h3>
-      <p>Un lit king size, défait, dans la pénombre.</p>
-    </div>
-    <div class="illustration-item">
-      <img src="sdc.png" alt="Salle de cinéma" />
-      <h3>Salle de cinéma</h3>
-      <p>Des sièges en velours rouge et une machine à pop-corn.</p>
-    </div>
-  </div>
-</section>
-
-    <!-- ... Le reste de votre page ... -->
-
-<!-- SECTION DU BOUTON ET DE LA MODALE -->
-<section style="text-align: center; margin-top: 2em;">
-  <button id="solution-btn" style="
-    background-color: #DA4F40; 
-    color: #fff; 
-    padding: 0.8em 1.2em; 
-    font-size: 1em; 
-    border: none; 
-    border-radius: 5px;
-    cursor: pointer;
-  ">
-    Voir la solution
-  </button>
-</section>
-
-<!-- Fenêtre modale cachée par défaut -->
-<div id="solution-modal" style="
-  display: none; 
-  position: fixed; 
-  top: 0; left: 0; 
-  width: 100%; 
-  height: 100%; 
-  background-color: rgba(0,0,0,0.9);
-  z-index: 9999;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-">
-  <div style="
-    background-color: #111; 
-    border: 2px solid #DA4F40;
-    padding: 2em;
-    max-width: 600px;
-    margin: auto;
-  ">
-    <h2 style="color: #DA4F40;">La solution</h2>
-    <p style="color: #ccc;">
-      Et oui, cher détective... <br/>
-Sous vos yeux ébahis, <br/>le noble vampire Dracula a commis son méfait dans la salle de bain, armé d’un simple cierge. <br/>Pas de bain moussant, mais un véritable bain de sang !<br/>
-
-Qui aurait cru qu’une bougie sacrée finirait en arme du crime ?<br/> À croire que même un aristocrate immortel peut être à court d'idées… 
-    </p>
-    <button onclick="closeSolution()" style="
-      margin-top: 1em;
-      background-color: #DA4F40;
-      color: #fff;
-      border: none; 
-      padding: 0.5em 1em;
-      cursor: pointer;
-      border-radius: 4px;
-    ">
-      Fermer
-    </button>
-  </div>
-</div>
-
-<script>
-  // Au chargement de la page, on associe l'ouverture de la modale au clic sur le bouton
-  document.addEventListener('DOMContentLoaded', function() {
-    const btn = document.getElementById('solution-btn');
-    const modal = document.getElementById('solution-modal');
-
-    btn.addEventListener('click', function() {
-      modal.style.display = 'flex';  // on l'affiche en flex (pour align-items/justify-content)
-    });
-  });
-
-  // Fonction pour fermer la modale
-  function closeSolution() {
-    const modal = document.getElementById('solution-modal');
-    modal.style.display = 'none';
-  }
-</script>
-
-    <!-- Juste avant votre </body> (ou dans le footer) -->
-<section style="text-align: center; margin-top: 2em;">
-  <p style="color: #ccc; font-size: 1.1em;">
-    Tu veux vivre une <strong>vraie enquête</strong> de façon immersive ?
-    Va voir nos scénarios de murder party&nbsp;!
-  </p>
-  <!-- BOUTON -->
-  <a href="https://kill-event.com" target="_blank" 
-     style="
-       display: inline-block; 
-       background-color: #DA4F40; 
-       color: #fff; 
-       padding: 0.8em 1.2em; 
-       text-decoration: none; 
-       border-radius: 5px;
-       font-weight: bold;
-       font-size: 1em;
-    ">
-    Voir nos scénarios
-  </a>
-</section>
-
-
-
+    <!-- BOUTON et TEXTE FINAL vers kill-event.com -->
+    <section style="text-align: center; margin-top: 2em;">
+      <p style="color: #ccc; font-size: 1.1em;">
+        Tu veux vivre une <strong>vraie enquête</strong> de façon immersive ?
+        Va voir nos scénarios de murder party&nbsp;!
+      </p>
+      <a href="https://kill-event.com" target="_blank" 
+         style="
+           display: inline-block; 
+           background-color: #DA4F40; 
+           color: #fff; 
+           padding: 0.8em 1.2em; 
+           text-decoration: none; 
+           border-radius: 5px;
+           font-weight: bold;
+           font-size: 1em;
+        ">
+        Voir nos scénarios
+      </a>
+    </section>
   </main>
 
-  <footer>
+  <footer style="text-align: center; margin-top: 2em; color: #666; font-size: 0.8em;">
     <p>&copy; 2025 - Kill Event. Tous droits réservés.</p>
   </footer>
 </body>
