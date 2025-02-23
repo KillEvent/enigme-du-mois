@@ -14,7 +14,7 @@
       margin: 0;
       padding: 0;
       background-color: #000; /* Fond noir */
-      color: #ccc;           /* Texte gris clair au lieu de blanc pur */
+      color: #ccc;           /* Texte gris clair */
       font-family: "Verdana", sans-serif;
     }
 
@@ -24,53 +24,30 @@
       margin-bottom: 0.5em;
     }
 
-    a, a:visited {
-      color: #DA4F40;
-      text-decoration: none;
-    }
-
-    a:hover {
-      text-decoration: underline;
-    }
-
-    .texte-rouge {
-      color: #7b0c05;
-    }
-
     /* ------------------------------
-       HEADER / LOGO / TITRE
+       HEADER
     --------------------------------*/
-    /**
-     * Au lieu d'utiliser position:absolute pour le logo,
-     * on utilise une mise en page en flex pour centrer
-     * et mieux gérer l'alignement sur mobile.
-     */
     header {
       display: flex;
       flex-direction: column;
-      align-items: center;        /* centre le contenu horizontalement */
-      justify-content: center;    /* centre si besoin verticalement */
+      align-items: center;
+      justify-content: center;
       padding: 1em;
       border-bottom: 2px solid #DA4F40;
       margin-bottom: 1em;
     }
 
     .logo {
-      /* Agrandit le logo */
-      height: 120px; /* ajustez si vous voulez encore + grand */
+      height: 120px; /* Ajustez selon la taille souhaitée */
       margin-bottom: 0.5em;
     }
 
     .mascotte {
-      /* Agrandit la mascotte */
-      height: 60px;  /* ajustez selon votre goût */
+      height: 60px; /* Ajustez selon la taille souhaitée */
       margin: 0 10px;
       vertical-align: middle;
     }
 
-    /* ------------------------------
-       CONTENEUR PRINCIPAL
-    --------------------------------*/
     main {
       max-width: 1200px;
       margin: 0 auto;
@@ -78,18 +55,25 @@
     }
 
     /* ------------------------------
-       TABLES (LOGIGRAMMES)
+       CONTENEUR DES TABLEAUX
     --------------------------------*/
     .logigramme-container {
       display: flex;
       flex-wrap: wrap;
-      justify-content: center; /* centre les tableaux sur grand écran */
-      align-items: flex-start;
-      gap: 2em;
+      justify-content: center; /* Centre horizontalement */
+      align-items: flex-start; /* Aligne les sommets */
+      gap: 1em;
       margin-top: 2em;
     }
 
+    /**
+     * TABLES (LOGIGRAMMES)
+     * On fixe la largeur pour qu'ils soient alignés.
+     * On applique table-layout: fixed pour respecter la largeur.
+     */
     table.logigramme {
+      table-layout: fixed;
+      width: 320px;           /* Largeur forcée (ajustez à vos besoins) */
       border-collapse: collapse;
       background-color: #111;
       box-shadow: 0 0 10px rgba(218,79,64,0.5);
@@ -98,27 +82,28 @@
     table.logigramme th {
       background-color: #DA4F40;
       color: #fff;
-      padding: 0.5em 1em;
+      padding: 0.5em;
       text-align: center;
       border: 1px solid #DA4F40;
       font-weight: normal;
+      word-wrap: break-word;
     }
 
     table.logigramme td {
-      width: 60px;
-      height: 60px;
+      word-wrap: break-word;
       text-align: center;
       vertical-align: middle;
       cursor: pointer;
       border: 1px solid #333;
       position: relative;
       font-size: 1.3em;
+      height: 60px;
     }
 
     /* Croix rouge moins flashy */
     .cross::after {
       content: "❌";
-      color: #b7473b; /* rouge moins flashy que #DA4F40 */
+      color: #b7473b; /* rouge moins flashy */
       position: absolute;
       top: 50%;
       left: 50%;
@@ -129,7 +114,7 @@
     /* Cercle vert moins flashy */
     .circle::after {
       content: "✅";
-      color: #3cbf3c; /* vert moins flashy que #00b300 */
+      color: #3cbf3c; /* vert moins flashy */
       position: absolute;
       top: 50%;
       left: 50%;
@@ -147,28 +132,11 @@
       border: 1px solid #DA4F40;
     }
 
-    .indices p {
-      margin: 0.5em 0;
-      line-height: 1.5em;
-    }
-
-    .mascotte-indice {
-      display: flex;
-      align-items: center;
-      margin: 1em 0;
-    }
-
-    .mascotte-indice img {
-      height: 40px;
-      margin-right: 10px;
-    }
-
     /* ------------------------------
-       SECTION ILLUSTRATIONS
+       ILLUSTRATIONS
     --------------------------------*/
     .illustrations {
       display: flex;
-      flex-direction: row;
       flex-wrap: wrap;
       gap: 1em;
       justify-content: center;
@@ -191,60 +159,25 @@
       margin-bottom: 0.5em;
     }
 
-    .illustration-item h3 {
-      margin: 0.5em 0;
-      color: #DA4F40;
-    }
-
-    footer {
-      text-align: center;
-      color: #666;
-      margin-top: 2em;
-      font-size: 0.8em;
-    }
-
-    /* --------------------------------
-       MEDIA QUERIES (Format mobile)
-    --------------------------------- */
+    /* ------------------------------
+       MEDIA QUERIES (FORMAT MOBILE)
+    --------------------------------*/
     @media (max-width: 700px) {
-      /* Sur téléphone, empile les tableaux
-         pour éviter que ça déborde */
       .logigramme-container {
-        flex-direction: column;
+        flex-direction: column;   /* Empile les tableaux */
         align-items: center;
       }
 
-      /* Réduit légèrement les cellules */
-      table.logigramme td {
-        width: 45px;
-        height: 45px;
+      table.logigramme {
+        width: 90%;              /* Sur mobile, prend 90% de la largeur */
+        max-width: 320px;
       }
     }
   </style>
 
   <script>
     /**
-     * Gère le clic sur les cellules => toggle cross/circle
-     */
-    function toggleCross(e) {
-      const cell = e.target;
-      if (cell.tagName.toLowerCase() === 'th') return; // ignore <th>
-      // Supprime le cercle si présent
-      cell.classList.remove('circle');
-      // Toggle de la croix
-      if (cell.classList.contains('cross')) {
-        cell.classList.remove('cross');
-      } else {
-        cell.classList.add('cross');
-      }
-      // Mettre à jour les cercles
-      const table = cell.closest('table');
-      updateCircles(table);
-    }
-
-    /**
-     * Met à jour les cercles verts
-     * (2 croix dans une ligne ou colonne => la 3e devient cercle)
+     * Mettre à jour les cercles verts
      */
     function updateCircles(table) {
       const rows = table.rows;
@@ -291,6 +224,22 @@
       }
     }
 
+    /**
+     * Toggle cross/circle sur clic
+     */
+    function toggleCross(e) {
+      const cell = e.target;
+      if (cell.tagName.toLowerCase() === 'th') return; // ignore <th>
+      cell.classList.remove('circle');
+      if (cell.classList.contains('cross')) {
+        cell.classList.remove('cross');
+      } else {
+        cell.classList.add('cross');
+      }
+      const table = cell.closest('table');
+      updateCircles(table);
+    }
+
     window.addEventListener('DOMContentLoaded', () => {
       const tables = document.querySelectorAll('table.logigramme');
       tables.forEach((table) => {
@@ -301,11 +250,9 @@
 </head>
 <body>
 
-  <!-- HEADER avec logo, titre et sous-titre -->
+  <!-- HEADER -->
   <header>
-    <!-- Agrandi le logo -->
     <img src="logo.png" alt="Logo" class="logo" />
-
     <h1>Énigme du mois</h1>
     <h2>
       <img src="mascotte.png" alt="Mascotte" class="mascotte" />
@@ -315,31 +262,23 @@
   </header>
 
   <main>
-    <!-- Indices -->
     <section class="indices">
       <h3>Les indices de l'enquête</h3>
+      <!-- Vos paragraphes ... -->
       <p>Dracula a mentionné qu’il réservait un sort spécial au suspect portant... une fourchette! 🍴</p>
       <p>En entrant, vous avez surpris Frankenstein tenant un coussin dans les mains... mais pourquoi? 😳</p>
       <p>Étrangement, le cierge habituel n’était pas dans la chambre... 🔦</p>
       <p>Zombie a été retrouvé caché sous un fauteuil en velours rouge. Un refuge, ou un piège? 🪑🧟‍♂️</p>
       <p>Le corps a été découvert dans une baignoire en marbre. Un lieu... sinistre. 🛁🩸</p>
-      <p><strong>Dernier indice :</strong> Pendant votre enquête, un mystérieux appel retentit (📞).  
-         <span class="texte-rouge">« Ma boule de cristal dit que Zombie tenait une fourchette dans ses mains. »</span>  
-         Et la ligne se coupa...
-      </p>
-
-      <div class="mascotte-indice">
-        <img src="mascotte.png" alt="Mascotte" />
-        <p>Utilisez les tableaux ci-dessous pour cocher (croix) et déduire (cercles) les bonnes combinaisons.</p>
-      </div>
+      <p><strong>Dernier indice :</strong> « Ma boule de cristal dit que Zombie tenait une fourchette. »</p>
     </section>
 
-    <!-- Les tableaux du logigramme -->
+    <!-- Conteneur flex avec 3 tableaux -->
     <section class="logigramme-container">
       <!-- Table 1 : Suspects vs. Armes -->
       <table class="logigramme" id="suspects-armes">
         <tr>
-          <th>Suspect \ Arme</th>
+          <th>Suspect<br/>Arme</th>
           <th>Fourchette</th>
           <th>Oreiller</th>
           <th>Cierge</th>
@@ -361,7 +300,7 @@
       <!-- Table 2 : Suspects vs. Lieux -->
       <table class="logigramme" id="suspects-lieux">
         <tr>
-          <th>Suspect \ Lieu</th>
+          <th>Suspect<br/>Lieu</th>
           <th>Salle de bain</th>
           <th>Chambre</th>
           <th>Salle de cinéma</th>
@@ -383,7 +322,7 @@
       <!-- Table 3 : Armes vs. Lieux -->
       <table class="logigramme" id="armes-lieux">
         <tr>
-          <th>Arme \ Lieu</th>
+          <th>Arme<br/>Lieu</th>
           <th>Salle de bain</th>
           <th>Chambre</th>
           <th>Salle de cinéma</th>
@@ -403,65 +342,8 @@
       </table>
     </section>
 
-    <!-- Illustrations -->
     <section class="illustrations">
-      <!-- Suspects -->
-      <div class="illustration-item">
-        <img src="dracula.png" alt="Dracula" />
-        <h3>Dracula</h3>
-        <!-- On retire "aura terrifiante" -->
-        <p>Aristocrate sombre, immortel, avide de sang, crocs acérés.</p>
-      </div>
-
-      <div class="illustration-item">
-        <img src="frankenstein.png" alt="Frankenstein" />
-        <h3>Frankenstein</h3>
-        <p>Créature massive, corps cousu, solitaire, cherchant l'acceptation.</p>
-      </div>
-
-      <div class="illustration-item">
-        <img src="zombie.png" alt="Zombie" />
-        <h3>Zombie</h3>
-        <p>Créature lente, décomposée, animée par un désir insatiable de chair.</p>
-      </div>
-
-      <!-- Armes -->
-      <div class="illustration-item">
-        <img src="fourchette.png" alt="Fourchette" />
-        <h3>Fourchette</h3>
-        <p>Bien pire qu’un couteau, si vous y pensez.</p>
-      </div>
-
-      <div class="illustration-item">
-        <img src="oreiller.png" alt="Oreiller" />
-        <h3>Oreiller</h3>
-        <p>Moins dangereux que la fourchette, mais utilisé à bon escient...</p>
-      </div>
-
-      <div class="illustration-item">
-        <img src="cierge.png" alt="Cierge" />
-        <h3>Cierge</h3>
-        <p>Assez lourd pour tuer, ou pour illuminer toute la pièce.</p>
-      </div>
-
-      <!-- Lieux -->
-      <div class="illustration-item">
-        <img src="sdb.png" alt="Salle de bain" />
-        <h3>Salle de bain</h3>
-        <p>Une salle de bain gigantesque, en marbre.</p>
-      </div>
-
-      <div class="illustration-item">
-        <img src="chambre.png" alt="Chambre" />
-        <h3>Chambre</h3>
-        <p>Un lit king size, défait, dans la pénombre.</p>
-      </div>
-
-      <div class="illustration-item">
-        <img src="sdc.png" alt="Salle de cinéma" />
-        <h3>Salle de cinéma</h3>
-        <p>Des sièges en velours rouge et une machine à pop-corn.</p>
-      </div>
+      <!-- Vos blocs d'illustration ... -->
     </section>
   </main>
 
