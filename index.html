@@ -3,6 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <title>Énigme du mois</title>
+  <!-- VIEWPORT pour mobile -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <style>
     /* ------------------------------
        RÉGLAGES GÉNÉRAUX
@@ -30,7 +33,6 @@
       text-decoration: underline;
     }
 
-    /* Pour ajouter un peu de rouge sombre sur certains éléments */
     .texte-rouge {
       color: #7b0c05;
     }
@@ -74,12 +76,14 @@
       justify-content: center;
       gap: 2em;
       margin-top: 2em;
+      /* sur mobile, on va parfois les empiler.
+         Le display flex-wrap gère déjà partiellement cela */
     }
 
     table.logigramme {
       border-collapse: collapse;
       margin: 0 auto;
-      background-color: #111; /* Légèrement plus clair que le fond pour se démarquer */
+      background-color: #111;
       box-shadow: 0 0 10px rgba(218,79,64,0.5);
     }
 
@@ -103,10 +107,10 @@
       font-size: 1.5em;
     }
 
-    /* Style pour la croix rouge */
+    /* Croix rouge */
     .cross::after {
       content: "❌";
-      color: #DA4F40; /* Croix rouge */
+      color: #DA4F40;
       position: absolute;
       top: 50%;
       left: 50%;
@@ -114,10 +118,10 @@
       font-size: 1.3em;
     }
 
-    /* Style pour le cercle vert */
+    /* Cercle vert */
     .circle::after {
       content: "✅";
-      color: #00b300; /* Vert */
+      color: #00b300;
       position: absolute;
       top: 50%;
       left: 50%;
@@ -173,7 +177,6 @@
       line-height: 1.5em;
     }
 
-    /* Un peu de mise en avant avec la mascotte */
     .mascotte-indice {
       display: flex;
       align-items: center;
@@ -191,28 +194,41 @@
       margin-top: 2em;
       font-size: 0.8em;
     }
+
+    /* --------------------------------
+       MEDIA QUERIES pour le format mobile
+    --------------------------------- */
+    @media (max-width: 600px) {
+      /* Diminue la taille des cellules du tableau */
+      table.logigramme td {
+        width: 45px;
+        height: 45px;
+        font-size: 1em;
+      }
+
+      .illustration-item {
+        width: 100%; /* chaque item prendra toute la largeur */
+      }
+    }
   </style>
+
   <script>
     /**
      * Fonction qui met à jour les cercles verts après chaque clic.
-     * Pour chaque tableau (3x3), on vérifie chaque ligne et chaque colonne :
-     *  - Si exactement 2 cellules sont marquées de la classe 'cross',
-     *    la 3e obtient la classe 'circle'.
-     *  - Sinon, pas de cercle sur cette ligne/colonne.
      */
     function updateCircles(table) {
       const rows = table.rows;
       const numRows = rows.length;
       const numCols = rows[0].cells.length;
 
-      // Nettoyage préalable : on retire tous les cercles
-      for (let r = 1; r < numRows; r++) { // Commence à 1 si la 1ère ligne est un header
+      // Nettoyage : on retire tous les cercles
+      for (let r = 1; r < numRows; r++) {
         for (let c = 1; c < numCols; c++) {
           rows[r].cells[c].classList.remove('circle');
         }
       }
 
-      // Vérifie les lignes
+      // Vérifier les lignes
       for (let r = 1; r < numRows; r++) {
         let crossCount = 0;
         let emptyCells = [];
@@ -223,13 +239,12 @@
             emptyCells.push(rows[r].cells[c]);
           }
         }
-        // S'il y a 2 croix dans la ligne, alors le 3e (et unique) cell vide prend un circle
         if (crossCount === 2 && emptyCells.length === 1) {
           emptyCells[0].classList.add('circle');
         }
       }
 
-      // Vérifie les colonnes
+      // Vérifier les colonnes
       for (let c = 1; c < numCols; c++) {
         let crossCount = 0;
         let emptyCells = [];
@@ -248,37 +263,25 @@
 
     /**
      * Fonction de toggle (clic sur une cellule):
-     *  - Si la cellule a la classe 'cross', on la retire (redevient vide).
-     *  - Sinon, on l'ajoute.
-     *  - Ensuite, on met à jour les circles.
      */
     function toggleCross(e) {
       const cell = e.target;
-      // Évite de toggler sur un <th> (header)
-      if (cell.tagName.toLowerCase() === 'th') return;
+      if (cell.tagName.toLowerCase() === 'th') return; // on ignore les <th>
 
-      // Si c'est déjà un cercle, on enlève le cercle d'abord
       cell.classList.remove('circle');
-
       if (cell.classList.contains('cross')) {
         cell.classList.remove('cross');
       } else {
         cell.classList.add('cross');
       }
 
-      // Mettre à jour les circles
       const table = cell.closest('table');
       updateCircles(table);
     }
 
-    /**
-     * Initialisation sur le chargement de la page:
-     * On ajoute un EventListener pour chaque tableau .logigramme
-     */
     window.addEventListener('DOMContentLoaded', () => {
       const tables = document.querySelectorAll('table.logigramme');
       tables.forEach((table) => {
-        // Ajout du "click" sur toutes les cellules
         table.addEventListener('click', toggleCross);
       });
     });
@@ -298,7 +301,6 @@
   </header>
 
   <main>
-    <!-- Présentation / Contexte -->
     <section class="indices">
       <h3>Les indices de l'enquête</h3>
       <p>Dracula a mentionné qu’il réservait un sort spécial au suspect portant... une fourchette! 🍴</p>
@@ -306,9 +308,10 @@
       <p>Étrangement, le cierge habituel n’était pas dans la chambre... 🔦</p>
       <p>Zombie a été retrouvé caché sous un fauteuil en velours rouge. Un refuge, ou un piège? 🪑🧟‍♂️</p>
       <p>Le corps a été découvert dans une baignoire en marbre. Un lieu... sinistre. 🛁🩸</p>
-      <p><strong>Dernier indice :</strong> Pendant votre enquête, un mystérieux appel retentit (📞). Une voix assurée murmura : 
-         <span class="texte-rouge">« Ma boule de cristal dit que Zombie tenait une fourchette dans ses mains. »</span> 
-         Et la ligne se coupa...</p>
+      <p><strong>Dernier indice :</strong> Pendant votre enquête, un mystérieux appel retentit (📞).  
+         <span class="texte-rouge">« Ma boule de cristal dit que Zombie tenait une fourchette dans ses mains. »</span>  
+         Et la ligne se coupa...
+      </p>
 
       <div class="mascotte-indice">
         <img src="mascotte.png" alt="Mascotte" />
@@ -316,9 +319,7 @@
       </div>
     </section>
 
-    <!-- Les tableaux du logigramme (3 tableaux 3x3) -->
     <section class="logigramme-container">
-
       <!-- Table 1 : Suspects vs. Armes -->
       <table class="logigramme" id="suspects-armes">
         <tr>
@@ -329,21 +330,15 @@
         </tr>
         <tr>
           <th>Dracula</th>
-          <td></td>
-          <td></td>
-          <td></td>
+          <td></td><td></td><td></td>
         </tr>
         <tr>
           <th>Frankenstein</th>
-          <td></td>
-          <td></td>
-          <td></td>
+          <td></td><td></td><td></td>
         </tr>
         <tr>
           <th>Zombie</th>
-          <td></td>
-          <td></td>
-          <td></td>
+          <td></td><td></td><td></td>
         </tr>
       </table>
 
@@ -357,21 +352,15 @@
         </tr>
         <tr>
           <th>Dracula</th>
-          <td></td>
-          <td></td>
-          <td></td>
+          <td></td><td></td><td></td>
         </tr>
         <tr>
           <th>Frankenstein</th>
-          <td></td>
-          <td></td>
-          <td></td>
+          <td></td><td></td><td></td>
         </tr>
         <tr>
           <th>Zombie</th>
-          <td></td>
-          <td></td>
-          <td></td>
+          <td></td><td></td><td></td>
         </tr>
       </table>
 
@@ -385,86 +374,75 @@
         </tr>
         <tr>
           <th>Fourchette</th>
-          <td></td>
-          <td></td>
-          <td></td>
+          <td></td><td></td><td></td>
         </tr>
         <tr>
           <th>Oreiller</th>
-          <td></td>
-          <td></td>
-          <td></td>
+          <td></td><td></td><td></td>
         </tr>
         <tr>
           <th>Cierge</th>
-          <td></td>
-          <td></td>
-          <td></td>
+          <td></td><td></td><td></td>
         </tr>
       </table>
-
     </section>
 
-    <!-- Illustrations des suspects, armes, lieux -->
     <section class="illustrations">
+      <!-- Suspects -->
       <div class="illustration-item">
         <img src="dracula.png" alt="Dracula" />
         <h3>Dracula</h3>
         <p>Aristocrate sombre, immortel, avide de sang, crocs acérés, aura terrifiante.</p>
       </div>
-
       <div class="illustration-item">
         <img src="frankenstein.png" alt="Frankenstein" />
         <h3>Frankenstein</h3>
-        <p>Créature massive, créée par un savant fou, corps cousu, solitaire, cherchant l'acceptation.</p>
+        <p>Créature massive, corps cousu, solitaire, cherchant l'acceptation.</p>
       </div>
-
       <div class="illustration-item">
         <img src="zombie.png" alt="Zombie" />
         <h3>Zombie</h3>
-        <p>Créature sans âme, lente, décomposée, désir insatiable de chair, terrifiante et contagieuse.</p>
+        <p>Créature lente, décomposée, animée par un désir insatiable de chair.</p>
       </div>
 
+      <!-- Armes -->
       <div class="illustration-item">
         <img src="fourchette.png" alt="Fourchette" />
         <h3>Fourchette</h3>
-        <p>Bien pire qu'un couteau, si vous y pensez.</p>
+        <p>Bien pire qu’un couteau, si vous y pensez.</p>
       </div>
-
       <div class="illustration-item">
         <img src="oreiller.png" alt="Oreiller" />
         <h3>Oreiller</h3>
-        <p>Moins dangereux que la fourchette, mais utilisé à bon escient, peut être une redoutable arme.</p>
+        <p>Moins dangereux que la fourchette, mais utilisé à bon escient...</p>
       </div>
-
       <div class="illustration-item">
         <img src="cierge.png" alt="Cierge" />
         <h3>Cierge</h3>
         <p>Assez lourd pour tuer, ou pour illuminer toute la pièce.</p>
       </div>
 
+      <!-- Lieux -->
       <div class="illustration-item">
         <img src="sdb.png" alt="Salle de bain" />
         <h3>Salle de bain</h3>
-        <p>Une salle de bain gigantesque, en marbre, plus grande que la vôtre...</p>
+        <p>Une salle de bain gigantesque, en marbre.</p>
       </div>
-
       <div class="illustration-item">
         <img src="chambre.png" alt="Chambre" />
         <h3>Chambre</h3>
-        <p>Un lit king size, défait, dans une chambre noire et sombre.</p>
+        <p>Un lit king size, défait, dans la pénombre.</p>
       </div>
-
       <div class="illustration-item">
         <img src="sdc.png" alt="Salle de cinéma" />
         <h3>Salle de cinéma</h3>
-        <p>Des sièges en velours rouges et une machine à pop corn.</p>
+        <p>Des sièges en velours rouge et une machine à pop-corn.</p>
       </div>
     </section>
   </main>
 
   <footer>
-    <p>&copy; 2025 - Votre Nom ou Projet. Tous droits réservés.</p>
+    <p>&copy; 2025 - Votre Nom. Tous droits réservés.</p>
   </footer>
 </body>
 </html>
